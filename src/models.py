@@ -38,22 +38,10 @@ class User(Base):
     firstname = Column(String(250), nullable=False)
     lastname = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False, unique=True)
+    user_to = relationship('Follower')
+    post = relationship('Post')
+    comment = relationship('Comment')
 
-class Post(Base):
-    __tablename__= 'post'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-
-
-class Comment(Base):
-    __tablename__= 'comment'
-    id = Column(Integer, primary_key=True)
-    comment_text = Column(String(250), nullable=False)
-    author_id = Column(Integer, ForeignKey('user.id'))
-    post_id = Column(Integer, ForeignKey('post.id'))
-    user = relationship(User)
-    post = relationship(Post)
 
 
 class Media(Base):
@@ -62,15 +50,29 @@ class Media(Base):
     type = Column(String(250), nullable=False)
     url = Column(String(250), nullable=False)
     post_id = Column(Integer, ForeignKey('post.id'))
-    post = relationship(Post)
+
+
+class Post(Base):
+    __tablename__= 'post'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
+    media = relationship('Media')
+    comment = relationship('Comment')
+
+
+class Comment(Base):
+    __tablename__= 'comment'
+    id = Column(Integer, primary_key=True)
+    comment_text = Column(String(250), nullable=False)
+    author_id = Column(Integer, ForeignKey('user.id'))
+    post_id = Column(Integer, ForeignKey('post.id'))
     
 
 class Follower(Base):
     __tablename__= 'follower'
     user_from_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    user_from = relationship(User)
     user_to_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
-    user_to = relationship(User)
 
 
 ## Draw from SQLAlchemy base
